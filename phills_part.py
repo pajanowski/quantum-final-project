@@ -1,7 +1,9 @@
 import math
 import random
+from utils import *
 
 from qiskit import *
+from qiskit.extensions import Initialize
 
 
 def get_pi_perm(n):
@@ -29,27 +31,15 @@ def get_L(N):
     return ret
 
 
-# N number to convert to superposition
-# returns super position in form of [[int]]
-# i.e. N = 1 returns [[0],[1]]
-# i.e. N = 2 returns [[0],[0],[1]]
-def get_superposition(n, size):
-    if size < 2:
-        size = 2
-    ret = []
-    binary_string = format(n + 1, 'b').zfill(size)
-    for i in range(len(binary_string) - 1, -1, -1):
-        ret.append([int(binary_string[i])])
-    return ret
-
-
 def run():
     N = 4
     L = get_L(N)
     number_of_qibits = math.ceil(math.log(N))
-    get_superposition()
-    circuit = QuantumCircuit(number_of_qibits)
-
+    qc = QuantumCircuit(number_of_qibits)
+    for n in range(N):
+        initializer = Initialize(scalar(1 / math.sqrt(N), get_superposition(n, number_of_qibits)))
+        qc.append(initializer, )
+    initialize = Initialize(initial_state)
 
 
 if __name__ == '__main__':
