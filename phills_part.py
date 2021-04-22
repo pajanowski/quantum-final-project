@@ -4,7 +4,7 @@ from utils import *
 
 from qiskit import *
 from qiskit.extensions import Initialize
-
+from qiskit.visualization import plot_histogram
 
 def get_pi_perm(n):
     pi = {}
@@ -34,13 +34,22 @@ def get_L(N):
 def run():
     N = 4
     L = get_L(N)
+    y = random.choice(range(N))
     number_of_qibits = math.ceil(math.log(N))
-    qc = QuantumCircuit(number_of_qibits)
-    for n in range(N):
-        initializer = Initialize(scalar(1 / math.sqrt(N), get_superposition(n, number_of_qibits)))
-        qc.append(initializer, )
-    initialize = Initialize(initial_state)
+    register = QuantumRegister(number_of_qibits)
+    qc = QuantumCircuit(register)
+    # initializer = Initialize(scalar(1 / math.sqrt(N), get_superposition(n, number_of_qibits)))
+    # qc.append(initializer, )
+    for i in range(number_of_qibits):
+        qc.h(register[i])
 
+    qc.measure_all()
+
+    backend = BasicAer.get_backend('qasm_simulator')
+    results = execute(qc, backend, shots=1000).result()
+    counts = results.get_counts(qc)
+    print(counts)
+    plot_histogram(counts)
 
 if __name__ == '__main__':
     run()
