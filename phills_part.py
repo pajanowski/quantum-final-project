@@ -36,20 +36,33 @@ def run():
     L = get_L(N)
     y = random.choice(range(N))
     number_of_qibits = math.ceil(math.log(N))
-    register = QuantumRegister(number_of_qibits)
-    qc = QuantumCircuit(register)
+    qr = QuantumRegister(number_of_qibits, 'q1')
+    cr = ClassicalRegister(number_of_qibits, 'c1')
+    qc = QuantumCircuit(qr, cr)
     # initializer = Initialize(scalar(1 / math.sqrt(N), get_superposition(n, number_of_qibits)))
     # qc.append(initializer, )
     for i in range(number_of_qibits):
-        qc.h(register[i])
+        qc.h(qr[i])
 
-    qc.measure_all()
-
+    qc.measure(0, 0)
+    qc.measure(1, 1)
+    qc.draw(output='mpl')
+    # qc.ms()
+    L_y = L[y]
+    # L_n = L[cr]
+    #
+    # if L_n < L_y:
+    #     cr[0] = -1 * cr[0]
+    #
+    #
+    #
+    #
     backend = BasicAer.get_backend('qasm_simulator')
     results = execute(qc, backend, shots=1000).result()
     counts = results.get_counts(qc)
     print(counts)
     plot_histogram(counts)
+
 
 if __name__ == '__main__':
     run()
