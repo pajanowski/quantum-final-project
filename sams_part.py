@@ -3,7 +3,7 @@ import IntegerComparator from qiskit
 import IBMQ, Aer, assemble, transpile 
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 
-initialize_s(qc, qubits):
+def initialize_s(qc, qubits):
     """Apply a H-gate to 'qubits' in qc"""
     for q in qubits:
         qc.h(q)
