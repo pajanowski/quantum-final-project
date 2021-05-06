@@ -53,16 +53,14 @@ def num_comp(inp1,inp2,inp3,inp4, l_y):
         qc.x(3)
         qc.measure(3,0)
     qc.x(3)
-    # this is where your program for quantum XOR gate goes
 
-    # barrier between input state and gate operation
     qc.barrier()
 
     #Remove comment below to check if the output has been reversed to match input
     #qc.measure(3,0)
 
 
-    #We'll run the program on a simulator
+    #Run the program on a simulator
     backend = Aer.get_backend('qasm_simulator')
     #Since the output will be deterministic, we can use just a single shot to get it
     job = execute(qc, backend, shots=1, memory=True)
