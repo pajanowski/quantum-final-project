@@ -102,6 +102,9 @@ def num_comp(n1,n2,n3,n4,y1,y2,y3,y4,lst):
     return qc, output
 
 def grover():
+    
+    n = 4
+    grover_circuit = QuantumCircuit(n)
     number_of_qibits = math.ceil(math.log(n))
     L = get_L(16)
     y = random.choice(range(n))
