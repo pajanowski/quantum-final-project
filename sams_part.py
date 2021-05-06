@@ -39,7 +39,7 @@ def oracle(lst, y):
     # barrier between input state and gate operation
     qc.barrier()
 
-    #n_bin_string = "0b" + n1 + n2 + n3 + n4
+    n_bin_string = "0b" + n1 + n2 + n3 + n4
     #print('n bin string: ', n_bin_string)
 
     if (lst[int(n_bin_string,2)] < lst[y]):
