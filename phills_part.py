@@ -2,10 +2,12 @@ import math
 import random
 from typing import Tuple
 
+from numpy import pi
 from qiskit.aqua.algorithms import Grover
 from qiskit.aqua.components.oracles import LogicalExpressionOracle
 from qiskit.circuit import classical_function, Int1
-from qiskit.circuit.library import IntegerComparator
+from qiskit.circuit.library import IntegerComparator, GroverOperator
+from qiskit.result import Counts
 
 from utils import *
 
@@ -15,6 +17,8 @@ from qiskit.visualization import plot_histogram
 
 L = []
 y = 0
+
+
 def get_pi_perm(n):
     pi = {}
     set = []
@@ -31,6 +35,7 @@ def get_pi_perm(n):
         pi[value] = key
     return pi
 
+
 # N integer
 def get_L(N):
     ret = []
@@ -45,69 +50,74 @@ def run():
     N = 16
     L = get_L(N)
     y = random.choice(range(N))
-    number_of_qibits = math.ceil(math.log(N, 2))
-    register = QuantumRegister(number_of_qibits)
-    qc = QuantumCircuit(register)
-    for i in range(number_of_qibits):
-        qc.h(register[i])
+    m = 10
+    for i in range(m):
+        number_of_qibits = math.ceil(math.log(N, 2))
+        register = QuantumRegister(number_of_qibits)
+        # qc = QuantumCircuit(register)
+        # for i in range(number_of_qibits):
+        #     qc.h(register[i])
+        # # oracle.append(IntegerComparator(number_of_qibits, L[y]))
+        # qc.z([0, 1, 2, 3])
+        # qc.cz(0, 3)
+        # qc.h([0, 1, 2, 3])
 
-    qc.measure_all()
+        oracle = QuantumCircuit(number_of_qibits)
+        for i in range(number_of_qibits):
+            oracle.h(i)
 
-    oracle = QuantumCircuit(number_of_qibits, 1)
+        # TODO append actual oracle part of the oracle here
+        oracle.x(0)
+        oracle.x(1)
 
-    # oracle.append(IntegerComparator(number_of_qibits, L[y]))
-    oracle_circuit = oracle_comparator.synth()
-    oracle.append(oracle_circuit)
-    oracle.draw(output='mpl')
+        oracle.cp(pi / 4, 0, 3)
+        oracle.cx(0, 1)
+        oracle.cp(-pi / 4, 1, 3)
+        oracle.cx(0, 1)
+        oracle.cp(pi / 4, 1, 3)
+        oracle.cx(1, 2)
+        oracle.cp(-pi / 4, 2, 3)
+        oracle.cx(0, 2)
+        oracle.cp(pi / 4, 2, 3)
 
-    grover_operator = Grover(oracle=oracle).grover_operator
-    qc.append(grover_operator)
+        oracle.x(0)
+        oracle.x(1)
+        oracle.cz(0, 1)
 
-    backend = BasicAer.get_backend('qasm_simulator')
-    results = execute(qc, backend, shots=1000).result()
-    counts = results.get_counts(qc)
-    print(counts)
-    plot_histogram(counts)
+        grover_operator = GroverOperator(oracle=oracle)
+        grover_operator.measure_all()
+        backend = BasicAer.get_backend('qasm_simulator')
+        results = execute(grover_operator, backend, shots=1000).result()
+        counts = results.get_counts(grover_operator)
+        print(counts)
+        plot_histogram(counts)
+        amplified_state = get_amplified_state(counts)
+        y_primed = int("0b" + amplified_state[0], 2)
+        print(f"amplified_state {amplified_state}")
+        set_new_y(y_primed)
 
 
-@classical_function
-def oracle_comparator(ln0: Int1, ln1: Int1, ln2: Int1, ln3: Int1, ly0: Int1, ly1: Int1, ly2: Int1, ly3: Int1) -> Int1:
-    output = (ln0 and not ln1 and not ln2 and not ln3 and not ly0 and not ly1 and not ly2 and ly3) or (
-            ln0 and not ln1 and not ln2 and not ly0 and not ly1 and ly2 and not ly3) or (
-                     ln0 and not ln1 and not ln2 and ln3 and not ly0 and not ly1 and ly2 and ly3) or (
-                     ln0 and not ln1 and not ln3 and not ly0 and not ly1 and ly2 and ly3) or (
-                     ln0 and not ln1 and ln2 and not ln3 and not ly0 and ly1 and not ly2 and ly3) or (
-                     ln0 and not ln1 and not ly0 and ly1 and not ly2 and not ly3) or (
-                     ln0 and not ln1 and ln3 and not ly0 and ly1 and not ly2 and ly3) or (
-                     ln0 and not ln1 and ln2 and not ly0 and ly1 and ly2 and not ly3) or (
-                     ln0 and not ln1 and ln2 and ln3 and not ly0 and ly1 and ly2 and ly3) or (
-                     ln1 and not ln2 and not ln3 and not ly0 and not ly1 and not ly2 and ly3) or (
-                     ln0 and not ln2 and not ln3 and not ly0 and ly1 and not ly2 and ly3) or (
-                     ln0 and ln1 and not ln2 and not ln3 and ly0 and not ly1 and not ly2 and ly3) or (
-                     ln1 and not ln2 and not ly0 and not ly1 and ly2 and not ly3) or (
-                     ln1 and not ln2 and ln3 and not ly0 and not ly1 and ly2 and ly3) or (
-                     ln0 and not ln2 and not ly0 and ly1 and ly2 and not ly3) or (
-                     ln0 and not ln2 and ln3 and not ly0 and ly1 and ly2 and ly3) or (
-                     ln0 and ln1 and not ln2 and ly0 and not ly1 and ly2 and not ly3) or (
-                     ln0 and ln1 and not ln2 and ln3 and ly0 and not ly1 and ly2 and ly3) or (
-                     ln2 and not ln3 and not ly0 and not ly1 and not ly2 and ly3) or (
-                     ln1 and not ln3 and not ly0 and not ly1 and ly2 and ly3) or (
-                     ln1 and ln2 and not ln3 and not ly0 and ly1 and not ly2 and ly3) or (
-                     ln0 and not ln3 and not ly0 and ly1 and ly2 and ly3) or (
-                     ln0 and ln2 and not ln3 and ly0 and not ly1 and not ly2 and ly3) or (
-                     ln0 and ln1 and not ln3 and ly0 and not ly1 and ly2 and ly3) or (
-                     ln0 and ln1 and ln2 and not ln3 and ly0 and ly1 and not ly2 and ly3) or (
-                     not ly0 and not ly1 and not ly2 and not ly3) or (ln3 and not ly0 and not ly1 and not ly2 and ly3) or (
-                     ln2 and not ly0 and not ly1 and ly2 and not ly3) or (ln2 and ln3 and not ly0 and not ly1 and ly2 and ly3) or (
-                     ln1 and not ly0 and ly1 and not ly2 and not ly3) or (ln1 and ln3 and not ly0 and ly1 and not ly2 and ly3) or (
-                     ln1 and ln2 and not ly0 and ly1 and ly2 and not ly3) or (ln1 and ln2 and ln3 and not ly0 and ly1 and ly2 and ly3) or (
-                     ln0 and ly0 and not ly1 and not ly2 and not ly3) or (ln0 and ln3 and ly0 and not ly1 and not ly2 and ly3) or (
-                     ln0 and ln2 and ly0 and not ly1 and ly2 and not ly3) or (ln0 and ln2 and ln3 and ly0 and not ly1 and ly2 and ly3) or (
-                     ln0 and ln1 and ly0 and ly1 and not ly2 and not ly3) or (ln0 and ln1 and ln3 and ly0 and ly1 and not ly2 and ly3) or (
-                     ln0 and ln1 and ln2 and ly0 and ly1 and ly2 and not ly3) or (ln0 and ln1 and ln2 and ln3 and ly0 and ly1 and ly2 and ly3)
+def set_new_y(y_primed):
+    global L, y
+    if L[y_primed] < L[y]:
+        y = y_primed
 
-    return output
+
+def get_amplified_state(counts: Counts):
+    highest = ('0', 0)
+    for count in counts.items():
+        if highest[1] < count[1]:
+            highest = count
+    return highest
+
+
+def get_good_states(str):
+    return ['1111']
+
+
+def draw(qc: QuantumCircuit):
+    qc.draw(output='mpl')
+
 
 if __name__ == '__main__':
     run()
-
