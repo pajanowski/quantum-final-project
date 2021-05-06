@@ -1,7 +1,12 @@
-import math from qiskit.circuit.library 
-import IntegerComparator from qiskit 
-import IBMQ, Aer, assemble, transpile 
+import math
+import pprint
+import random
+# importing Qiskit
+from qiskit import *
+from qiskit import IBMQ, Aer, assemble, transpile
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
+from qiskit.quantum_info import Statevector
+from qiskit.extensions import Initialize
 
 def initialize_s(qc, qubits):
     """Apply a H-gate to 'qubits' in qc"""
