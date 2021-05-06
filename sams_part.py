@@ -26,8 +26,6 @@ def num_comp(n1,n2,n3,n4,y1,y2,y3,y4,lst):
     # barrier between input state and gate operation
     qc.barrier()
 
-
-
     n_bin_string = "0b" + str(n1) + str(n2) + str(n3) + str(n4)
     print('n bin string: ', n_bin_string)
     y_bin_string = "0b" + str(y1) + str(y2) + str(y3) + str(y4)
@@ -39,12 +37,9 @@ def num_comp(n1,n2,n3,n4,y1,y2,y3,y4,lst):
         qc.x(2)
         qc.x(3)
         qc.measure_all()
-
     else:
         qc.measure_all()
-    # this is where your program for quantum XOR gate goes
 
-    # barrier between input state and gate operation
     qc.barrier()
 
     #We'll run the program on a simulator
