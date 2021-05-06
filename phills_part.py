@@ -118,6 +118,17 @@ def get_good_states(str):
 def draw(qc: QuantumCircuit):
     qc.draw(output='mpl')
 
+def get_truth_table():
+    global L, y
+    truth_table = ''
+    L_y = L[y]
+    for i in range(len(L)):
+        if L[i] < L_y:
+            truth_table += '1'
+        else:
+            truth_table += '0'
+    return truth_table
+
 
 if __name__ == '__main__':
     run()
