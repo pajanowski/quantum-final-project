@@ -14,6 +14,52 @@ def initialize_s(qc, qubits):
         qc.h(q)
     return qc
 
+def oracle(lst, y):
+    qc = QuantumCircuit(4, 1)
+    #qc.reset(range(4))
+    n1 = '0'
+    n2 = '0'
+    n3 = '0'
+    n4 = '0'
+
+
+    if qc.measure(0,0)=='1':
+        n1 = '1'
+        qc.x(3)
+    if qc.measure(1,0)=='1':
+        n2 = '1'
+        qc.x(2)
+    if qc.measure(2,0)=='1':
+        n3 = '1'
+        qc.x(1)
+    if qc.measure(3,0)=='1':
+        n4 = '1'
+        qc.x(0)
+
+    # barrier between input state and gate operation
+    qc.barrier()
+
+    #n_bin_string = "0b" + n1 + n2 + n3 + n4
+    #print('n bin string: ', n_bin_string)
+
+    if (lst[int(n_bin_string,2)] < lst[y]):
+        qc.x(0)
+        qc.x(1)
+        qc.x(2)
+        qc.x(3)
+        qc.measure_all()
+
+    else:
+        qc.measure_all()
+
+    qc.barrier()
+
+    backend = Aer.get_backend('qasm_simulator')
+    job = execute(qc, backend, shots=1, memory=True)
+    output = job.result().get_memory()[0]
+
+    return qc, output
+
 def num_comp(n1,n2,n3,n4,y1,y2,y3,y4,lst):
 
     qc = QuantumCircuit(4, 1)
