@@ -23,16 +23,20 @@ def oracle(lst, y):
     n4 = '0'
 
 
-    if qc.measure(0,0)=='1':
+    qc.measure(0,0)
+    if execute(qc, backend, shots=1, memory=True).result().get_memory()[0] =='1':
         n1 = '1'
         qc.x(3)
-    if qc.measure(1,0)=='1':
+    qc.measure(1,0)
+    if execute(qc, backend, shots=1, memory=True).result().get_memory()[0] =='1':
         n2 = '1'
         qc.x(2)
-    if qc.measure(2,0)=='1':
+    qc.measure(2,0)
+    if execute(qc, backend, shots=1, memory=True).result().get_memory()[0] =='1':
         n3 = '1'
         qc.x(1)
-    if qc.measure(3,0)=='1':
+    qc.measure(3,0)
+    if execute(qc, backend, shots=1, memory=True).result().get_memory()[0] =='1':
         n4 = '1'
         qc.x(0)
 
