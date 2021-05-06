@@ -15,13 +15,13 @@ def num_comp(n1,n2,n3,n4,y1,y2,y3,y4,lst):
     qc.reset(range(4))
 
     if n1==1:
-        qc.x(0)
-    if n2==1:
-        qc.x(1)
-    if n3==1:
-        qc.x(2)
-    if n4==1:
         qc.x(3)
+    if n2==1:
+        qc.x(2)
+    if n3==1:
+        qc.x(1)
+    if n4==1:
+        qc.x(0)
 
     # barrier between input state and gate operation
     qc.barrier()
