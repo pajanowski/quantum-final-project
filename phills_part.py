@@ -60,7 +60,7 @@ def run():
     # y = random.choice(range(N))
     y = L.index(15)
     # y = 9
-    m = 15
+    m = 5
     for i in range(m):
         print(f"y = {y} | {get_int_as_bit_string(y)}")
         print(f"L[y] = {L[y]}")
@@ -69,12 +69,12 @@ def run():
         """
         This is the function for the mostly working grover search using an oracle that isn't reversible.
         """
-        # result = grover_with_logical_expression()
+        result = grover_with_logical_expression()
 
         """
         This is the function for the non working grover search using an oracle that is reversible.
         """
-        result = grover_with_custom_circuit(number_of_qibits)
+        # result = grover_with_custom_circuit(number_of_qibits)
 
         measurements = result.get('measurement')
 
@@ -176,6 +176,8 @@ def grover_with_custom_circuit(number_of_qibits):
     circuit_oracle = CustomCircuitOracle(variable_register=qreg, output_register=output, circuit=qc,
                                          evaluate_classically_callback=f_L)
     grover = Grover(oracle=circuit_oracle)
+    draw: Figure = grover.grover_operator.draw(output='mpl')
+    draw.savefig('custom_circuit_grover.png')
     result = grover.run(QuantumInstance(BasicAer.get_backend('qasm_simulator'), shots=2048))
     return result
 
@@ -197,6 +199,8 @@ def grover_with_logical_expression():
     expression = get_boolean_functions_from_truth_table_logical_oracle()
     oracle = LogicalExpressionOracle(expression=expression, optimization=True, mct_mode='noancilla')
     grover = Grover(oracle=oracle)
+    draw: Figure = grover.grover_operator.draw(output='mpl')
+    draw.savefig('logical_expression_grover.png')
     return grover.run(QuantumInstance(BasicAer.get_backend('qasm_simulator'), shots=2048))
 
 
