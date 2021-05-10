@@ -43,12 +43,9 @@ def run():
     global L, y, N
     N = 16
     L = get_L(N)
-    # L = [3, 5, 8, 0, 6, 1, 4, 13, 2, 15, 12, 14, 10, 7, 11, 9]
     print(f"L = {L}")
     print(f"index containing 0 = {L.index(0)}")
-    # y = random.choice(range(N))
-    y = L.index(15)
-    # y = 9
+    y = random.choice(range(N))
     m = 5
     for i in range(m):
         print(f"y = {y} | {get_int_as_bit_string(y)}")
