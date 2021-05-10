@@ -10,13 +10,13 @@ class Test(TestCase):
         phills_part.L = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         phills_part.y = 4
         table = phills_part.get_truth_table()
-        expected = '1111000000000000'
+        expected = [x for x in '1111000000000000']
         self.assertEqual(expected, table)
 
         phills_part.N = 4
         phills_part.L = [1, 0, 3, 2]
         phills_part.y = 2
-        expected = '1101'
+        expected = [x for x in '1101']
         table = phills_part.get_truth_table()
         self.assertEqual(expected, table)
 
