@@ -1,22 +1,12 @@
-import ast
 import math
 import random
-from typing import Tuple, Union, List
+from typing import Tuple, List
 
 from matplotlib.figure import Figure
-from numpy import pi
-from qiskit.aqua.algorithms import Grover
-from qiskit.aqua.components.oracles import LogicalExpressionOracle, CustomCircuitOracle, Oracle
-from qiskit.circuit import classical_function, Int1
-from qiskit.circuit.library import *
-from qiskit.result import Counts
-from qiskit.utils import QuantumInstance
-from sympy.codegen import ast
-
-from utils import *
-
 from qiskit import *
-from qiskit.extensions import Initialize
+from qiskit.aqua.algorithms import Grover
+from qiskit.aqua.components.oracles import LogicalExpressionOracle, CustomCircuitOracle
+from qiskit.utils import QuantumInstance
 from qiskit.visualization import plot_histogram
 
 L = []
@@ -41,7 +31,6 @@ def get_pi_perm(n):
     return pi
 
 
-# N integer
 def get_L(N):
     ret = []
     pi_perm = get_pi_perm(N)
@@ -68,11 +57,13 @@ def run():
 
         """
         This is the function for the mostly working grover search using an oracle that isn't reversible.
+        See function doc for more info.
         """
         result = grover_with_logical_expression()
 
         """
         This is the function for the non working grover search using an oracle that is reversible.
+        See function doc for more info.
         """
         # result = grover_with_custom_circuit(number_of_qibits)
 
@@ -98,17 +89,6 @@ def run():
         top_measurement_int = get_int_from_bit_string(top_measurement)
         histogram.suptitle(f"L[y] = {L[y]} Top Measurement n = {str(top_measurement_int)} L[n] = {str(L[top_measurement_int])}")
         histogram.savefig(f"{i}.png")
-
-        """
-        For some g darn reason the top_measurement, the bit string that grover spits out, is the correct order on 
-        the first go iteration but not for any of the following. That's the why this caveat is here that basically 
-        defeats the point of putting it through a quantum circuit, so its staying commented out. I have tried reversing 
-        the truth table, the logical expression, and the top_measurement en masse to no avail. I noticed this after 
-        seeing the circuit succeed when the L[0] index was a number that when converted to a bit string was reversible. 
-        i.e. 15 (1111), 6 (0110), 9 (1001).
-        """
-        # if i != 0:
-        #     top_measurement = top_measurement[::-1]
 
         y_primed = int("0b" + str(top_measurement), 2)
         # print(f"amplified_state {amplified_state}")
